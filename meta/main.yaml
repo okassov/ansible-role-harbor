@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  role_name: harbor
+
+  author: Okassov Marat
+
+  description: Install and manage Harbor
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms:
+    - name: Debian
+      versions:
+        - booster
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+
+  galaxy_tags:
+    - harbor
+    - registry
+
+dependencies: []
