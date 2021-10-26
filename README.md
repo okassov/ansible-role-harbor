@@ -58,8 +58,6 @@ None.
 ---
 - name: Installing and configuring Harbor
   hosts: registry
-  vars_files:
-    - certificate.yml
   vars:
     harbor_version: 2.3.2
     harbor_hostname: "registry.example.com"
@@ -67,6 +65,38 @@ None.
     harbor_ui_url_protocol: "https"
     harbor_ssl_self_signed_generate: false
     habor_metrics_enabled: true
+  pre_tasks:
+
+    - name: 'pre-task | Ensure Harbor SSL directory exist'
+      file:
+        path: "{{ harbor_ssl_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      tags:
+        - pre-task
+
+    - name: 'pre-task | Copy Harbor SSL certificate'
+      copy:
+        src: "ssl/ssl.crt"
+        dest: "{{ harbor_ssl_dir }}/{{ harbor_hostname }}.crt"
+        owner: root
+        group: root
+        mode: '0644'
+      tags:
+        - pre-task
+
+    - name: 'pre-task | Copy Harbor SSL certificate key'
+      copy:
+        src: "ssl/ssl.key"
+        dest: "{{ harbor_ssl_dir }}/{{ harbor_hostname }}.key"
+        owner: root
+        group: root
+        mode: '0644'
+      tags:
+        - pre-task
+
   roles:
     - role: harbor
 ```

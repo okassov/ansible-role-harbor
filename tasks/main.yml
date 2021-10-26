@@ -81,28 +81,6 @@
   when:
     - (not harbor_folder_st.stat.exists or (harbor_folder_st.stat.isdir is defined and not harbor_folder_st.stat.isdir)) and harbor_ssl_self_signed_generate
 
-- name: 'install | Copy Harbor SSL certificate'
-  template:
-    backup: yes
-    src: harbor.crt.j2
-    dest: "{{ harbor_ssl_dir }}/{{ harbor_hostname }}.crt"
-    owner: root
-    group: root
-    mode: '0644'
-    force: no
-  when: not harbor_ssl_self_signed_generate
-
-- name: 'install | Copy Harbor SSL certificate key'
-  template:
-    backup: yes
-    src: harbor.key.j2
-    dest: "{{ harbor_ssl_dir }}/{{ harbor_hostname }}.key"
-    owner: root
-    group: root
-    mode: '0644'
-    force: no
-  when: not harbor_ssl_self_signed_generate
-
 - name: 'install | Commenting required line on Nginx configuration if harbor_behind_proxy is set'
   replace:
     path: "{{ harbor_install_dir }}/harbor/common/templates/nginx/{{ item }}"
@@ -173,6 +151,8 @@
     return_content: yes
     body: "{{ lookup('template', 'templates/create_project.j2') }}"
   when: harbor_projects is defined
+  register: project_response
+  changed_when: project_response.status == 201
   with_items: "{{ harbor_projects }}"
 
 - name: 'install | Creating users...'
@@ -189,4 +169,9 @@
     return_content: yes
     body: "{{ lookup('template', 'templates/create_user.j2') }}"
   when: harbor_users is defined and harbor_self_registration == "off"
+  register: user_response
+  changed_when: user_response.status == 201
   with_items: "{{ harbor_users }}"
+
+- include: ldap.yml
+  when: harbor_ldap_auth | bool

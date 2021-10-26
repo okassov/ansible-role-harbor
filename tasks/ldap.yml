@@ -1,0 +1,29 @@
+---
+
+- name: 'LDAP | Configure'
+  uri:
+    url: '{{ harbor_api_url }}/configurations'
+    method: PUT
+    user: admin
+    password: '{{ harbor_admin_password }}'
+    body_format: json
+    force_basic_auth: yes
+    headers:
+      Content-Type: "application/json"
+    body:
+      auth_mode: "ldap_auth"
+      ldap_url: "{{ harbor_ldap_url }}"
+      ldap_base_dn: "{{ harbor_ldap_base_dn}}"
+      ldap_search_dn: "{{ harbor_ldap_search_dn }}"
+      ldap_search_password: "{{ harbor_ldap_search_password }}"
+      ldap_filter: '{{ harbor_ldap_filter | default (omit) }}'
+      ldap_scope: '{{ harbor_ldap_scope | default (omit) }}'
+      ldap_timeout: '{{ harbor_ldap_timeout | default (omit) }}'
+      ldap_uid: '{{ harbor_ldap_uid | default (omit) }}'
+      ldap_verify_cert: '{{ harbor_ldap_verify_cert | default (omit) }}'
+      ldap_group_admin_dn: '{{ harbor_ldap_group_admin_dn | default (omit) }}'
+      ldap_group_attribute_name: '{{ harbor_ldap_group_attribute_name | default (omit) }}'
+      ldap_group_base_dn: '{{ harbor_ldap_group_base_dn | default (omit) }}'
+      ldap_group_search_filter: '{{ harbor_ldap_group_search_filter | default (omit) }}'
+      ldap_group_search_scope: '{{ harbor_group_search_scope | default (omit) }}'
+      ldap_group_membership_attribute: '{{ harbor_group_membership_attribute | default (omit) }}'
